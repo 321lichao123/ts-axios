@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2019-11-20 23:45:56
- * @LastEditTime: 2019-11-20 23:49:41
- * @LastEditors: your name
+ * @LastEditTime: 2019-11-22 00:50:02
+ * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \ts-axios\examples\server.js
  */
@@ -23,20 +23,41 @@ router.get('/simple/get', function (req, res) {
     })
 })
 
-app.use(webpackDevMiddleware(compiler, {
-    publicPath: '/__build__/',
-    stats: {
-        colors: true,
-        chunks: false
-    }
-}))
+router.get('/base/get', function (req, res) {
+    console.log(req.query, "==>>>req.query")
+    res.json(req.query);
+})
 
-app.use(webpackHotMiddleware(compiler))
+router.post('/base/post', function(req, res) {
+    res.join(req.body);
+})
 
-app.use(express.static(__dirname))
+router.post('/base/buffer', function(req, res) {
+    let msg = [];
+    req.on('data', (chunk) => {
+        if (chunk) {
+            msg.push(chunk);
+        }
+    })
+    req.on('end', () => {
+        let buf = Buffer.concat(msg);
+        res.json(buf.toJSON());
+    })
+})
+// app.use(webpackDevMiddleware(compiler, {
+//     publicPath: '/__build__/',
+//     stats: {
+//         colors: true,
+//         chunks: false
+//     }
+// }))
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+// app.use(webpackHotMiddleware(compiler))
+
+// app.use(express.static(__dirname))
+
+// app.use(bodyParser.json())
+// app.use(bodyParser.urlencoded({ extended: true }))
 app.use(router)
 
 
